@@ -1,6 +1,6 @@
 # Nossa Jornada de Amor
 
-Site interativo feito com React, TypeScript e Vite. No último nível, a opção escolhida é enviada por uma função serverless, sem expor credenciais no navegador.
+Site interativo feito com React, TypeScript e Vite. No último nível, a opção escolhida é salva no servidor e pode ser consultada em uma tela administrativa protegida por senha.
 
 ## Rodar localmente
 
@@ -11,35 +11,30 @@ npm install
 npm run dev
 ```
 
-O site abre em `http://localhost:3000`. Para testar também a função de notificação localmente, use a CLI da Vercel:
+O site abre em `http://localhost:3000`. A tela administrativa fica em `http://localhost:3000/admin`.
+
+Para testar também as funções da API localmente, use a CLI da Vercel:
 
 ```bash
 npm install -g vercel
 vercel dev
 ```
 
-## Configurar a notificação
+## Configurar o painel administrativo
 
-Copie `.env.example` para `.env.local` e escolha um canal em `NOTIFICATION_CHANNEL`.
+1. Na Vercel, adicione uma integração de Redis da Upstash ao projeto.
+2. Confirme que foram criadas as variáveis `KV_REST_API_URL` e `KV_REST_API_TOKEN`. Os nomes `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` também são aceitos.
+3. Crie a variável `ADMIN_PASSWORD` com uma senha forte.
+4. Faça um novo deploy.
+5. Acesse `/admin` no mesmo domínio do site e entre com a senha definida.
 
-### E-mail com Resend
-
-1. Crie uma conta em [resend.com](https://resend.com) e gere uma API key.
-2. Configure `NOTIFICATION_CHANNEL=email`.
-3. Preencha `RESEND_API_KEY` e `NOTIFICATION_EMAIL`.
-4. Para produção, valide seu domínio no Resend e ajuste `NOTIFICATION_FROM_EMAIL`. O remetente de teste `onboarding@resend.dev` só entrega para o e-mail da própria conta Resend.
-
-### Telegram
-
-1. Crie um bot com o `@BotFather` e envie uma mensagem para esse bot.
-2. Configure `NOTIFICATION_CHANNEL=telegram`.
-3. Preencha `TELEGRAM_BOT_TOKEN` e `TELEGRAM_CHAT_ID`.
+A senha permanece apenas na sessão da aba do navegador. As respostas são exibidas da mais recente para a mais antiga, com data e horário de Fortaleza. O painel mantém as 100 respostas mais recentes.
 
 ## Deploy na Vercel
 
 1. Importe o repositório em [vercel.com](https://vercel.com).
-2. Em **Settings → Environment Variables**, cadastre as mesmas variáveis do canal escolhido.
-3. Faça o deploy. O framework, o build e a função `/api/notify` já estão definidos em `vercel.json`.
+2. Em **Settings → Environment Variables**, configure as variáveis descritas acima.
+3. Faça o deploy. O framework, o build, a rota `/admin` e a função `/api/responses` já estão definidos em `vercel.json`.
 
 Antes de publicar, rode:
 

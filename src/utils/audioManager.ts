@@ -9,13 +9,10 @@
  * - Troca suave com fade out da música anterior e fade in da nova música
  * - Prevenção absoluta de sobreposição e instâncias duplicadas
  * - Tratamento gracioso de arquivos ausentes (sem erros na tela ou console)
- * - Suporte a upload direto do arquivo completo via IndexedDB
  * - Volume inicial confortável (0.5)
  * - Mute persistente durante toda a navegação entre telas
  * ==============================================================================
  */
-
-import { getAudioBlob, saveAudioBlob, clearAudioBlob } from './audioStorage';
 
 export interface TrackState {
   src: string;
@@ -24,7 +21,6 @@ export interface TrackState {
   isMuted: boolean;
   volume: number;
   usingSynthFallback: boolean;
-  hasCustomFile: boolean;
 }
 
 type TrackChangeListener = (state: TrackState) => void;
@@ -39,10 +35,6 @@ class RomanticAudioManager {
   private listeners: Set<TrackChangeListener> = new Set();
   private usingSynthFallback: boolean = false;
 
-  // Arquivo personalizado carregado pelo usuário (IndexedDB)
-  private customBlobUrl: string | null = null;
-  private hasCustomFile: boolean = false;
-
   // Controle de transições concorrentes (fade out / fade in)
   private transitionId: number = 0;
   private fadeInterval: number | null = null;
@@ -50,64 +42,6 @@ class RomanticAudioManager {
   // Web Audio sintetizador para quando o arquivo .mp3 ainda não existe na pasta
   private audioCtx: AudioContext | null = null;
   private synthInterval: number | null = null;
-
-  constructor() {
-    // Carrega áudio personalizado do IndexedDB se existir
-    if (typeof window !== 'undefined') {
-      this.initCustomAudio();
-    }
-  }
-
-  private async initCustomAudio() {
-    try {
-      const blob = await getAudioBlob('custom_bg_audio');
-      if (blob) {
-        this.customBlobUrl = URL.createObjectURL(blob);
-        this.hasCustomFile = true;
-        this.notifyListeners();
-      }
-    } catch {
-      // no-op
-    }
-  }
-
-  /**
-   * Permite ao usuário carregar seu próprio arquivo de música
-   * diretamente pela interface caso deseje.
-   */
-  public async loadCustomAudio(file: File): Promise<void> {
-    this.registerUserInteraction();
-    try {
-      await saveAudioBlob('custom_bg_audio', file);
-      if (this.customBlobUrl) {
-        URL.revokeObjectURL(this.customBlobUrl);
-      }
-      this.customBlobUrl = URL.createObjectURL(file);
-      this.hasCustomFile = true;
-
-      // Reproduz imediatamente o áudio personalizado
-      this.playTrack(this.customBlobUrl, 'Era Óbvio (Personalizada)');
-    } catch (err) {
-      console.warn('Erro ao carregar arquivo personalizado:', err);
-    }
-  }
-
-  /**
-   * Remove o arquivo personalizado e restaura o áudio padrão
-   */
-  public async removeCustomAudio(): Promise<void> {
-    try {
-      await clearAudioBlob('custom_bg_audio');
-      if (this.customBlobUrl) {
-        URL.revokeObjectURL(this.customBlobUrl);
-        this.customBlobUrl = null;
-      }
-      this.hasCustomFile = false;
-      this.playTrack('/audio/era-obvio.mp3', 'Era Óbvio');
-    } catch {
-      // no-op
-    }
-  }
 
   /**
    * Registra a primeira interação do usuário para liberar
@@ -138,19 +72,14 @@ class RomanticAudioManager {
   public playTrack(src: string, label: string = 'Era Óbvio') {
     this.registerUserInteraction();
 
-    // Se houver um arquivo personalizado carregado e o src pedido for o áudio padrão,
-    // prioriza o arquivo personalizado
-    const effectiveSrc = this.customBlobUrl ? this.customBlobUrl : src;
-    const effectiveLabel = this.customBlobUrl ? 'Era Óbvio' : label;
-
     // Se já estiver tocando exatamente esta faixa, NÃO reinicia: a música continua tocando inteira!
-    if (this.currentSrc === effectiveSrc && this.currentAudio && !this.currentAudio.paused) {
+    if (this.currentSrc === src && this.currentAudio && !this.currentAudio.paused) {
       this.notifyListeners();
       return;
     }
 
     // Se for o mesmo arquivo e estiver pausado (mas não mudo), retoma de onde parou
-    if (this.currentSrc === effectiveSrc && this.currentAudio && !this.isMuted) {
+    if (this.currentSrc === src && this.currentAudio && !this.isMuted) {
       this.currentAudio.play().then(() => {
         if (this.currentAudio) this.currentAudio.volume = this.masterVolume;
       }).catch(() => {});
@@ -158,8 +87,8 @@ class RomanticAudioManager {
       return;
     }
 
-    this.currentSrc = effectiveSrc;
-    this.currentLabel = effectiveLabel;
+    this.currentSrc = src;
+    this.currentLabel = label;
     const thisTransitionId = ++this.transitionId;
 
     // Limpa fade anterior pendente
@@ -190,7 +119,7 @@ class RomanticAudioManager {
           clearInterval(fadeOutTimer);
           oldAudio.pause();
         }
-      }, 30);
+      }, 400);
     } else if (oldAudio) {
       try {
         oldAudio.pause();
@@ -210,7 +139,7 @@ class RomanticAudioManager {
     }
 
     // 2. Prepara a nova faixa
-    const newAudio = new Audio(effectiveSrc);
+    const newAudio = new Audio(src);
     newAudio.loop = true; // A música toca inteira e recomeça em loop contínuo
     newAudio.volume = 0; // Começa em 0 para fazer Fade In suave
     this.currentAudio = newAudio;
@@ -450,7 +379,6 @@ class RomanticAudioManager {
       isMuted: this.isMuted,
       volume: this.masterVolume,
       usingSynthFallback: this.usingSynthFallback,
-      hasCustomFile: this.hasCustomFile,
     };
   }
 }

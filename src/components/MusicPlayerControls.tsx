@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { audioManager } from '../utils/audioManager';
-import { Volume2, VolumeX, Music, ChevronDown, ChevronUp, Upload, RotateCcw } from 'lucide-react';
+import { Volume2, VolumeX, Music, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const MusicPlayerControls: React.FC = () => {
   const [audioState, setAudioState] = useState(audioManager.getStatus());
   const [isExpanded, setIsExpanded] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const unsubscribe = audioManager.subscribe((state) => {
@@ -13,13 +12,6 @@ export const MusicPlayerControls: React.FC = () => {
     });
     return () => unsubscribe();
   }, []);
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      audioManager.loadCustomAudio(file);
-    }
-  };
 
   return (
     <aside aria-label="Controle de Áudio" className="fixed top-3 right-3 z-40">
@@ -89,38 +81,8 @@ export const MusicPlayerControls: React.FC = () => {
               <p className="font-semibold text-[#dc2626] truncate">
                 🎵 {audioState.label || 'Era Óbvio'}
               </p>
-              <p className="font-mono text-[10px] text-gray-400 truncate mt-0.5">
-                {audioState.hasCustomFile ? 'Arquivo local do dispositivo' : '/audio/era-obvio.mp3'}
-              </p>
             </div>
 
-            {/* Botão sutil para carregar arquivo próprio de áudio */}
-            <div className="mt-3 pt-2.5 border-t border-gray-100 flex flex-col gap-1.5">
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept="audio/*"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full py-1.5 px-2.5 text-[11px] font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Upload className="w-3 h-3 text-[#dc2626]" />
-                <span>Carregar outro arquivo .mp3</span>
-              </button>
-
-              {audioState.hasCustomFile && (
-                <button
-                  onClick={() => audioManager.removeCustomAudio()}
-                  className="w-full py-1 px-2 text-[10px] text-gray-400 hover:text-[#dc2626] flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                >
-                  <RotateCcw className="w-2.5 h-2.5" />
-                  <span>Restaurar áudio padrão</span>
-                </button>
-              )}
-            </div>
           </div>
         )}
       </div>

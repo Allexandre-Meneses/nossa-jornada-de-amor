@@ -4,8 +4,14 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "functions": {
-    "api/notify.ts": {
+    "api/responses.ts": {
       "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/"
+    }
+  ]
 }

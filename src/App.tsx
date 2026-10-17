@@ -7,7 +7,7 @@ import { LevelView } from './components/LevelView';
 import { CupidAnimation } from './components/CupidAnimation';
 import { MusicPlayerControls } from './components/MusicPlayerControls';
 import { ResetConfirmModal } from './components/ResetConfirmModal';
-import { notifyFinalChoice } from './utils/choiceNotification';
+import { saveFinalChoice } from './utils/choiceResponse';
 
 type AppView = 'welcome' | 'menu' | 'level';
 
@@ -89,12 +89,12 @@ export default function App() {
   const handleFinalResponseSelected = async (choice: string) => {
     if (finalChoice) return;
 
-    await notifyFinalChoice(choice);
+    await saveFinalChoice(choice);
     setFinalChoice(choice);
     try {
       localStorage.setItem(FINAL_CHOICE_KEY, choice);
     } catch {
-      // A notificação já foi enviada; o armazenamento local é apenas preventivo.
+      // A resposta já foi salva no servidor; o armazenamento local é apenas preventivo.
     }
   };
 

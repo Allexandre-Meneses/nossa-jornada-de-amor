@@ -1,5 +1,8 @@
 import { RomanticContentConfig } from '../types/romantic';
 
+// Versão da URL evita reutilizar em cache a prévia antiga de 30 segundos.
+const backgroundAudioSrc = '/audio/era-obvio.mp3?v=2';
+
 /**
  * ==============================================================================
  * CONFIGURAÇÃO DE CONTEÚDO EDITÁVEL
@@ -16,13 +19,13 @@ export const romanticContent: RomanticContentConfig = {
   welcome: {
     message: "Para alguém muito especial... Preparei este site para dizer tudo o que sinto por você!",
     buttonText: "Entrar",
-    audioSrc: "/audio/era-obvio.mp3",
+    audioSrc: backgroundAudioSrc,
   },
 
   // Menu Principal
   journey: {
     title: "Nossa Jornada",
-    audioSrc: "/audio/era-obvio.mp3",
+    audioSrc: backgroundAudioSrc,
   },
 
   // Os 4 Níveis
@@ -30,7 +33,7 @@ export const romanticContent: RomanticContentConfig = {
     {
       id: 1,
       title: "Nível 1",
-      audioSrc: "/audio/era-obvio.mp3",
+      audioSrc: backgroundAudioSrc,
       audioTitle: "Era Óbvio",
       content: {
         messageParagraphs: [
@@ -51,7 +54,7 @@ export const romanticContent: RomanticContentConfig = {
     {
       id: 2,
       title: "Nível 2",
-      audioSrc: "/audio/era-obvio.mp3",
+      audioSrc: backgroundAudioSrc,
       audioTitle: "Era Óbvio",
       content: {
         messageParagraphs: [
@@ -72,7 +75,7 @@ export const romanticContent: RomanticContentConfig = {
     {
       id: 3,
       title: "Nível 3",
-      audioSrc: "/audio/era-obvio.mp3",
+      audioSrc: backgroundAudioSrc,
       audioTitle: "Era Óbvio",
       content: {
         messageParagraphs: [
@@ -93,7 +96,7 @@ export const romanticContent: RomanticContentConfig = {
     {
       id: 4,
       title: "Nível 4",
-      audioSrc: "/audio/era-obvio.mp3",
+      audioSrc: backgroundAudioSrc,
       audioTitle: "Era Óbvio",
       isGrandFinale: true,
       content: {

@@ -13,7 +13,7 @@ interface LevelViewProps {
   initialResponse?: string | null;
 }
 
-type NotificationStatus = 'idle' | 'sending' | 'sent' | 'error';
+type ResponseStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 export const LevelView: React.FC<LevelViewProps> = ({
   level,
@@ -27,11 +27,11 @@ export const LevelView: React.FC<LevelViewProps> = ({
     initialResponse
   );
   const [showHearts, setShowHearts] = useState(false);
-  const [notificationStatus, setNotificationStatus] =
-    useState<NotificationStatus>(initialResponse ? 'sent' : 'idle');
+  const [responseStatus, setResponseStatus] =
+    useState<ResponseStatus>(initialResponse ? 'saved' : 'idle');
 
   const handleChoiceClick = async (choice: string) => {
-    if (notificationStatus === 'sending' || notificationStatus === 'sent') return;
+    if (responseStatus === 'saving' || responseStatus === 'saved') return;
 
     setSelectedResponse(choice);
 
@@ -44,12 +44,12 @@ export const LevelView: React.FC<LevelViewProps> = ({
     }
 
     if (level.isGrandFinale) {
-      setNotificationStatus('sending');
+      setResponseStatus('saving');
       try {
         await onResponseSelected(choice);
-        setNotificationStatus('sent');
+        setResponseStatus('saved');
       } catch {
-        setNotificationStatus('error');
+        setResponseStatus('error');
       }
     }
   };
@@ -132,8 +132,8 @@ export const LevelView: React.FC<LevelViewProps> = ({
                       key={btnText}
                       onClick={() => handleChoiceClick(btnText)}
                       disabled={
-                        notificationStatus === 'sending' ||
-                        notificationStatus === 'sent'
+                        responseStatus === 'saving' ||
+                        responseStatus === 'saved'
                       }
                       className={`min-h-[58px] sm:min-h-[52px] p-2 rounded-xl text-[11px] sm:text-xs md:text-sm font-semibold leading-tight transition-all shadow-romantic-sm active:scale-95 cursor-pointer flex items-center justify-center text-center ${
                         selectedResponse === btnText
@@ -155,12 +155,12 @@ export const LevelView: React.FC<LevelViewProps> = ({
                       {getFeedbackMessage(selectedResponse).subtitle}
                     </p>
 
-                    {notificationStatus === 'sending' && (
+                    {responseStatus === 'saving' && (
                       <p className="text-xs text-gray-500 mt-3" role="status">
-                        Enviando sua resposta...
+                        Registrando sua resposta...
                       </p>
                     )}
-                    {notificationStatus === 'sent' && (
+                    {responseStatus === 'saved' && (
                       <p
                         className="text-xs font-medium text-green-700 mt-3"
                         role="status"
@@ -168,7 +168,7 @@ export const LevelView: React.FC<LevelViewProps> = ({
                         Resposta registrada com sucesso ✓
                       </p>
                     )}
-                    {notificationStatus === 'error' && (
+                    {responseStatus === 'error' && (
                       <div className="mt-3" role="alert">
                         <p className="text-xs text-red-700">
                           Não foi possível enviar agora. Toque abaixo para tentar
@@ -200,12 +200,12 @@ export const LevelView: React.FC<LevelViewProps> = ({
         <footer className="mt-8 pt-4 pb-2 text-center">
           <button
             onClick={onCompleteLevel}
-            disabled={level.isGrandFinale && notificationStatus !== 'sent'}
+            disabled={level.isGrandFinale && responseStatus !== 'saved'}
             className="w-full min-h-[48px] px-8 py-3 rounded-full font-medium text-sm text-white bg-[#dc2626] hover:bg-[#b91c1c] active:scale-95 transition-all shadow-md shadow-red-500/20 cursor-pointer disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100"
           >
-            {level.isGrandFinale && notificationStatus !== 'sent'
-              ? notificationStatus === 'sending'
-                ? 'Enviando resposta...'
+            {level.isGrandFinale && responseStatus !== 'saved'
+              ? responseStatus === 'saving'
+                ? 'Registrando resposta...'
                 : 'Escolha uma resposta acima'
               : isCompleted
                 ? 'Voltar para o menu'
