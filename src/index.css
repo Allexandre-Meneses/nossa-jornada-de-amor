@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --color-primary-red: #c8102e;
+    --color-cherry-red: #dc2626;
+    --color-dark-red: #991b1b;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #ffffff;
+    color: #1f2937;
+    min-height: 100vh;
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.font-romantic {
+  font-family: var(--font-serif);
+}
+
+.font-body {
+  font-family: var(--font-sans);
+}
+
+/* Faixas decorativas superior e inferior (vermelho e branco) */
+.ribbon-top {
+  background: linear-gradient(90deg, #991b1b 0%, #dc2626 50%, #991b1b 100%);
+  height: 6px;
+  width: 100%;
+}
+
+.ribbon-top-subtle {
+  background: linear-gradient(90deg, rgba(220, 38, 38, 0.08) 0%, rgba(220, 38, 38, 0.85) 50%, rgba(220, 38, 38, 0.08) 100%);
+  height: 2px;
+  width: 100%;
+}
+
+.ribbon-bottom {
+  background: linear-gradient(90deg, #991b1b 0%, #dc2626 50%, #991b1b 100%);
+  height: 6px;
+  width: 100%;
+}
+
+/* Brilhos e sombras sutis e elegantes */
+.glow-subtle-red {
+  filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.35));
+}
+
+.shadow-romantic-sm {
+  box-shadow: 0 2px 10px rgba(220, 38, 38, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-romantic-md {
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Animação dos Corações Subindo (Efeito do Botão Entrar) */
+@keyframes riseUp {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(-50vh) translateX(var(--drift-x, 15px)) scale(1.05);
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-105vh) translateX(var(--drift-x-end, -20px)) scale(1.2);
+    opacity: 0;
+  }
+}
+
+.animate-rising-heart {
+  animation-name: riseUp;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+}
+
+/* Pulso suave de amor para o elemento central */
+@keyframes softHeartPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.animate-soft-pulse {
+  animation: softHeartPulse 2.4s ease-in-out infinite;
+}
+
+/* Scrollbar refinada */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+::-webkit-scrollbar-thumb {
+  background: #fca5a5;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #dc2626;
+}

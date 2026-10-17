@@ -1,0 +1,6 @@
+{
+  "name": "Nossa Jornada de Amor",
+  "description": "Uma experiência romântica e interativa criada especialmente para uma pessoa especial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
