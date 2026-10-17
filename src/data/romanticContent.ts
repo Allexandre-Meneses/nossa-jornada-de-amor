@@ -64,7 +64,6 @@ export const romanticContent: RomanticContentConfig = {
           {
             id: "l2-p1",
             src: "/images/foto_1.jpeg",
-            caption: "Espaço reservado para foto",
             alt: "Foto Nível 2",
             aspectRatio: "4:3",
           },
@@ -85,7 +84,6 @@ export const romanticContent: RomanticContentConfig = {
           {
             id: "l3-p1",
             src: "/images/foto_3.jpeg",
-            caption: "Espaço reservado para foto",
             alt: "Foto Nível 3",
             aspectRatio: "4:3",
           },
